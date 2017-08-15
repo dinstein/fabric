@@ -6,7 +6,7 @@
 cli:
 
     # The address that the cli process will use for callbacks from chaincodes
-    address: 0.0.0.0:7052
+    address: 127.0.0.1:7052
 
 
 
@@ -30,6 +30,24 @@ rest:
         # Valid enrollment ID pattern in URLs: At least one character long, and
         # all characters are A-Z, a-z, 0-9 or _.
         enrollmentID: '^\w+$'
+
+###############################################################################
+#
+#    service section
+#
+###############################################################################
+service:
+
+    # Enable/disable setting for the secondary rpc for chain and devops service.
+    enabled: true
+
+    # The address that the rpc service will listen on
+    address: 127.0.0.1:7051
+
+    # The Address which peer will use when run as client
+    # If the target peer's service is enabled, it should be the port at which
+    # service is listening
+    cliaddress: 127.0.0.1:7051
 
 ###############################################################################
 #
@@ -62,12 +80,15 @@ logging:
     #
     # Developers: Please see fabric/docs/Setup/logging-control.md for more
     # options.
-    peer: warning
+    level: debug
+    client: debug
 
-    node:      info
-    network:   warning
-    chaincode: warning
-    version: warning
+#    peer: warning
+#
+#    node:      info
+#    network:   warning
+#    chaincode: warning
+#    version: warning
 
 ###############################################################################
 #
@@ -77,7 +98,7 @@ logging:
 peer:
 
     # The Peer id is used for identifying this Peer instance.
-    id: jdoe
+    id: billgates
 
     # The privateKey to be used by this peer
     # privateKey: 794ef087680e2494fa4918fd8fb80fb284b50b57d321a31423fe42b9ccf6216047cea0b66fe8365a8e3f2a8140c6866cc45852e63124668bee1daa9c97da0c2a
@@ -87,10 +108,20 @@ peer:
     # networkId: test
     networkId: dev
 
+    # For local calling of peer, often the node and node client can both use
+    localaddr: 127.0.0.1:7056
+
     # The Address this Peer will listen on
-    listenAddress: 0.0.0.0:7051
-    # The Address this Peer will bind to for providing services
-    address: 0.0.0.0:7051
+    listenAddress: 127.0.0.1:7055
+
+    # The Address this Peer will bind for p2p communication
+    address: 127.0.0.1:7055
+
+    # The Address which peer will use when run as client
+    # If the target peer's service is enabled, it should be the port at which
+    # service is listening
+    cliaddress: 127.0.0.1:7051
+
     # Whether the Peer should programmatically determine the address to bind to.
     # This case is useful for docker containers.
     addressAutoDetect: false
@@ -155,7 +186,18 @@ peer:
 
     # TLS Settings for p2p communications
     tls:
-        enabled:  false
+        # enable tls for p2p
+        enabled: false
+
+        # enable tls for p2p, will use tlsca
+        p2pusetlsca: false
+
+        # enable for remote rpc call
+        serviceenabled: false
+
+        # enable for local rpc call
+        localsrvabled: false
+
         cert:
             file: testdata/server1.pem
         key:
@@ -318,11 +360,12 @@ chaincode:
     # command line on local machine
     #net - in net mode validator will run chaincode in a docker container
 
-    mode: net
+    mode: dev
+    # mode: net
     # typically installpath should not be modified. Otherwise, user must ensure
     # the chaincode executable is placed in the path specifed by installpath in
     # the image
-    installpath: /opt/gopath/bin/
+    installpath:
 
     # keepalive in seconds. In situations where the communiction goes through a
     # proxy that does not support keep-alive, this parameter will maintain connection
