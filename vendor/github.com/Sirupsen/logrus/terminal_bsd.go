@@ -2,8 +2,8 @@
 
 package logrus
 
-import "syscall"
+//import "syscall"
 
-const ioctlReadTermios = syscall.TIOCGETA
+//const ioctlReadTermios = syscall.TIOCGETA
 
-type Termios syscall.Termios
+//type Termios syscall.Termios
